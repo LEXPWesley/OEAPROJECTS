@@ -17,14 +17,11 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "fc5d8e53-8fb9-44e0-aa5c-a2c1702bf1bd"
+				"spark.autotune.trackingId": "59641344-cf08-4b35-8728-f4c7eebc649c"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1"
-			},
 			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
@@ -46,35 +43,11 @@
 				"nodeCount": 3,
 				"cores": 4,
 				"memory": 28,
-				"extraHeader": null
-			}
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# ContosoISD Example\n",
-					"This example demonstrates how to use the OEA framework and modules to process incoming data, perform data prep, and view the data in an example Power BI dashboard.\n",
-					"\n",
-					"# Running the example\n",
-					"1) Run the Copy_Contoso_test_data pipeline in order to land test data in your data lake. Do this by clicking on \"Integrate\" in the left navigation, then click on Copy_Contoso_test_data, then click on \"Add Trigger\" and then \"Trigger Now\".\n",
-					"\n",
-					"2) Click on \"Run all\" at the top of this tab (and wait for the processing to complete - which can take around 5 to 10 minutes).\n",
-					"\n",
-					"3) Open the dashboard in Power BI desktop and point it to your newly setup data lake (you can download the pbix from here: [techInequityDashboardContoso v2.pbix](https://github.com/microsoft/OpenEduAnalytics/blob/main/packages/ContosoISD/power_bi/techInequityDashboardContoso%20v2.pbix) )\n",
-					"\n",
-					"# More info\n",
-					"See [OEA Solution Guide](https://github.com/microsoft/OpenEduAnalytics/blob/main/docs/OpenEduAnalyticsSolutionGuide.pdf) for more details on this example."
-				],
-				"attachments": null
-			},
 			{
 				"cell_type": "code",
 				"metadata": {
@@ -92,7 +65,6 @@
 				"source": [
 					"%run /OEA_py"
 				],
-				"attachments": null,
 				"execution_count": 61
 			},
 			{
@@ -112,7 +84,6 @@
 				"source": [
 					"%run /modules_py"
 				],
-				"attachments": null,
 				"execution_count": 65
 			},
 			{
@@ -135,7 +106,6 @@
 					"m365 = M365(oea)\n",
 					"contoso_sis = ContosoSIS(oea, 'contoso_sis', False)"
 				],
-				"attachments": null,
 				"execution_count": 66
 			},
 			{
@@ -155,11 +125,10 @@
 				"source": [
 					"# 2) Process the raw data (csv format) from stage1 into stage2 (adds schema details and writes out in parquet format).\n",
 					"#    [Note: we're not performing pseudonymization in this example, so everything is written to container stage2np.]\n",
-					"#m365.process_latest_roster_from_stage1()\n",
+					"m365.process_latest_roster_from_stage1()\n",
 					"contoso_sis.process_latest_from_stage1()\n",
-					"#m365.process_activity_data_from_stage1()"
+					"m365.process_activity_data_from_stage1()"
 				],
-				"attachments": null,
 				"execution_count": 67
 			},
 			{
@@ -210,7 +179,6 @@
 					"df = spark.sql(\"select Id, Name, Code, Description, ExternalId, CreateDate, LastModifiedDate, IsActive, CalendarId, 'Math' Department from Course\")\n",
 					"df.write.format('parquet').mode('overwrite').save(oea.stage2np + '/ContosoISD/Course')"
 				],
-				"attachments": null,
 				"execution_count": 55
 			},
 			{
@@ -236,7 +204,6 @@
 					"df.write.format('parquet').mode('overwrite').save(oea.stage2np +'/ContosoISD/Demographics')\r\n",
 					""
 				],
-				"attachments": null,
 				"execution_count": 56
 			},
 			{
@@ -278,25 +245,7 @@
 					"\n",
 					"print(f\"Created spark db's.\\nYou can now open the 'techInequityDashboardContoso v2.pbix' dashboard and change the datasource to point to: {oea.serverless_sql_endpoint}\")"
 				],
-				"attachments": null,
 				"execution_count": 57
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Reset everything\n",
-					"You can uncomment line 11 in the cell below and run the cell to reset everything and walk through the process again from the top (starting from running the pipeline to bring test data into stage1np).\n",
-					"\n",
-					"Note: remember to comment out line 11 again to prevent accidental resetting of the example"
-				],
-				"attachments": null
 			},
 			{
 				"cell_type": "code",
@@ -325,7 +274,6 @@
 					"# Uncomment the following line and run this cell to reset everything if you want to walk through the process again.\n",
 					"#reset_all_processing()"
 				],
-				"attachments": null,
 				"execution_count": 60
 			}
 		]
